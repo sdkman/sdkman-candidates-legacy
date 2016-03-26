@@ -13,7 +13,7 @@ script:
 
 after_success:
   - docker build -t sdkman/candidates:"$TRAVIS_BUILD_NUMBER" .
-  - docker push sdkman/candidates:"$TRAVIS_BUILD_NUMBER"
+  - docker push sdkman/sdkman-candidates:"$TRAVIS_BUILD_NUMBER"
 before_cache:
   - rm -f $HOME/.gradle/caches/modules-2/modules-2.lock
 cache:
