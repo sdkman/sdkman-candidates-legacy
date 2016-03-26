@@ -1,0 +1,53 @@
+import org.apache.tools.ant.filters.*
+
+buildscript {
+    repositories {
+        jcenter()
+    }
+}
+
+apply plugin: 'groovy'
+apply plugin: 'idea'
+apply plugin: 'eclipse'
+
+defaultTasks 'clean', 'prepareServer', 'prepareTemplates'
+
+ext.defaultSdkManVersion = '1.0.0-SNAPSHOT'
+
+loadConfiguration()
+
+repositories {
+    jcenter()
+}
+
+dependencies {
+    compile 'org.codehaus.groovy:groovy:2.4.5'
+    compile 'org.codehaus.groovy:groovy-templates:2.4.5'
+    compile 'org.codehaus.groovy:groovy-json:2.4.5'
+    compile 'org.vert-x:vertx-lang-groovy:1.3.1.final'
+}
+
+def loadConfiguration() {
+    def environment = hasProperty('env') ? env : 'local'
+    ext.environment = environment
+    println "Environment is set to: $environment"
+    
+    def configFile = file('config.groovy')
+    def config = new ConfigSlurper(environment).parse(configFile.toURL())
+    ext.config = config
+}
+
+task prepareTemplates(type: Copy) {
+	from "src/main/templates"
+	into "build/templates"
+	include "*.gtpl"
+}
+
+task prepareServer(type: Copy){
+	from 'src/main/groovy'
+	into 'build/server'
+	include 'server.groovy'
+	filter(ReplaceTokens, tokens: [SDKMAN_VERSION:config.sdkmanVersion ?: defaultSdkManVersion, VERTX_VERSION:config.vertxVersion])
+}
+
+assemble.dependsOn prepareTemplates, prepareServer
