@@ -37,6 +37,20 @@ def loadConfiguration() {
     ext.config = config
 }
 
+task prepareScripts(type: Copy) {
+    from 'src/main/scripts'
+    into 'build/scripts'
+    include '*.sh'
+    filter(ReplaceTokens, tokens:
+        [
+            SDKMAN_VERSION          : config.sdkmanVersion ?: defaultSdkManVersion,
+            SDKMAN_SERVICE          : config.sdkmanService,
+            SDKMAN_BROKER_SERVICE   : config.sdkmanBrokerService,
+            SDKMAN_BROADCAST_SERVICE: config.sdkmanBroadcastService
+        ]
+    )
+}
+
 task prepareTemplates(type: Copy) {
 	from "src/main/templates"
 	into "build/templates"
@@ -50,4 +64,4 @@ task prepareServer(type: Copy){
 	filter(ReplaceTokens, tokens: [SDKMAN_VERSION:config.sdkmanVersion ?: defaultSdkManVersion, VERTX_VERSION:config.vertxVersion])
 }
 
-assemble.dependsOn prepareTemplates, prepareServer
+assemble.dependsOn prepareTemplates, prepareScripts, prepareServer

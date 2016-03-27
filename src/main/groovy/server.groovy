@@ -39,12 +39,12 @@ def config = [
 container.deployModule 'vertx.mongo-persistor-v1.2', config
 
 def templateEngine = new SimpleTemplateEngine()
-def templateBase = "sdkman"
+def sdkmanBase = "sdkman"
 
-def listVersionsTemplateFile = "${templateBase}/list_versions.gtpl" as File
+def listVersionsTemplateFile = "${sdkmanBase}/list_versions.gtpl" as File
 def listVersionsTemplate = templateEngine.createTemplate(listVersionsTemplateFile)
 
-def listCandidatesTemplateFile = "${templateBase}/list_candidates.gtpl" as File
+def listCandidatesTemplateFile = "${sdkmanBase}/list_candidates.gtpl" as File
 def listCandidatesTemplate = templateEngine.createTemplate(listCandidatesTemplateFile)
 
 
@@ -56,17 +56,17 @@ def rm = new RouteMatcher()
 
 rm.get("/") { req ->
 	addPlainTextHeader req
-	req.response.sendFile('build/scripts/install.sh')
+	req.response.sendFile("${sdkmanBase}/install.sh")
 }
 
 rm.get("/selfupdate") { req ->
 	addPlainTextHeader req
-	req.response.sendFile('build/scripts/selfupdate.sh')
+	req.response.sendFile("${sdkmanBase}/selfupdate.sh")
 }
 
 rm.get("/robots.txt") { req ->
     addPlainTextHeader req
-    req.response.sendFile('build/resources/main/templates/robots.txt')
+    req.response.sendFile("${sdkmanBase}/robots.txt")
 }
 
 rm.get("/alive") { req ->
