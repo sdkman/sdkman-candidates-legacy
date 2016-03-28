@@ -79,12 +79,23 @@ rm.get("/alive") { req ->
 }
 
 rm.get("/res") { req ->
-    def purpose = req.params['purpose']
+	def purpose = req.params['purpose']
 	log purpose, 'sdkman', SDKMAN_VERSION, req
 
-	def zipFile = 'build/distributions/sdkman-scripts.zip' as File
-	req.response.putHeader("Content-Type", "application/zip")
-	req.response.sendFile zipFile.absolutePath
+	def baseUrl = "https://bintray.com/artifact/download"
+	def folders = "sdkman/sdkman-cli/sdkman-cli/sdkman-cli"
+
+	def cmd = [action:"find", collection:"application", matcher:[:], keys:[cliVersion:1]]
+	vertx.eventBus.send("mongo-persistor", cmd){ msg ->
+		def sdkmanCliVersion = msg.body.results.cliVersion.first()
+		def artifact = "sdkman-cli-${sdkmanCliVersion}.zip"
+		def zipUrl = "$baseUrl/$folders/$artifact"
+		
+		req.response.putHeader("Content-Type", "application/zip")
+		req.response.putHeader("Location", zipUrl)
+		req.response.statusCode = 302
+		req.response.end()
+	}
 }
 
 rm.get("/candidates") { req ->

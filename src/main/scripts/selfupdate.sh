@@ -150,7 +150,7 @@ sdkman_src_folder="${SDKMAN_DIR}/src"
 download_url="${SDKMAN_SERVICE}/res?platform=${sdkman_platform}&purpose=selfupdate"
 __sdkman_echo_debug "Download new scripts from: ${download_url}"
 __sdkman_echo_debug "Download new scripts to: ${sdkman_tmp_zip}"
-curl -s "$download_url" > "$sdkman_tmp_zip"
+curl -L "$download_url" > "$sdkman_tmp_zip"
 
 ARCHIVE_OK=$(unzip -qt "$sdkman_tmp_zip" | grep 'No errors detected in compressed data')
 if [[ -z "$ARCHIVE_OK" ]]; then

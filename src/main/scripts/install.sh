@@ -213,7 +213,7 @@ echo "sdkman_curl_connect_timeout=5" >> "$sdkman_config_file"
 echo "sdkman_curl_max_time=4" >> "$sdkman_config_file"
 
 echo "Download script archive..."
-curl -s "${SDKMAN_SERVICE}/res?platform=${sdkman_platform}&purpose=install" > "$sdkman_zip_file"
+curl -L "${SDKMAN_SERVICE}/res?platform=${sdkman_platform}&purpose=install" > "$sdkman_zip_file"
 
 echo "Extract script archive..."
 if [[ "$cygwin" == 'true' ]]; then
