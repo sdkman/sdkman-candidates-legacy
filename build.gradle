@@ -54,7 +54,7 @@ task prepareScripts(type: Copy) {
 task prepareTemplates(type: Copy) {
 	from "src/main/templates"
 	into "build/templates"
-	include "*.gtpl"
+	include "*.gtpl", "*.txt"
 }
 
 task prepareServer(type: Copy){
