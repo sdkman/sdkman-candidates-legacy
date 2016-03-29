@@ -98,6 +98,15 @@ rm.get("/res") { req ->
 	}
 }
 
+rm.get("/cliversion") { req ->
+	def cmd = [action:"find", collection:"application", matcher:[:], keys:[cliVersion:1]]
+	vertx.eventBus.send("mongo-persistor", cmd){ msg ->
+		def sdkmanCliVersion = msg.body.results.cliVersion.first()
+		addPlainTextHeader req
+		req.response.end sdkmanCliVersion
+	}
+}
+
 rm.get("/candidates") { req ->
 	def cmd = [action:"find", collection:"candidates", matcher:[:], keys:[candidate:1]]
 	vertx.eventBus.send("mongo-persistor", cmd){ msg ->
