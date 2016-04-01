@@ -47,11 +47,9 @@ def listVersionsTemplate = templateEngine.createTemplate(listVersionsTemplateFil
 def listCandidatesTemplateFile = "${sdkmanBase}/list_candidates.gtpl" as File
 def listCandidatesTemplate = templateEngine.createTemplate(listCandidatesTemplateFile)
 
-def installTemplateFile = "${sdkmanBase}/install.sh" as File
-def installTemplate = templateEngine.createTemplate(installTemplateFile)
+def installScriptText = new File("${sdkmanBase}/install.sh").text
 
-def selfupdateTemplateFile = "${sdkmanBase}/selfupdate.sh" as File
-def selfupdateTemplate = templateEngine.createTemplate(selfupdateTemplateFile)
+def selfupdateScriptText = new File("${sdkmanBase}/selfupdate.sh").text
 
 //
 // route matcher implementations
@@ -63,12 +61,8 @@ rm.get("/") { req ->
     def cmd = [action:"find", collection:"application", matcher:[:], keys:[cliVersion:1]]
     vertx.eventBus.send("mongo-persistor", cmd){ msg ->
         def sdkmanCliVersion = msg.body.results.cliVersion.first()
-
-        def binding = [cliVersion: sdkmanCliVersion]
-        def template = installTemplate.make(binding)
-
         addPlainTextHeader req
-        req.response.end template.toString()
+        req.response.end installScriptText.replace("<SDKMAN_CLI_VERSION>", sdkmanCliVersion)
     }
 }
 
@@ -76,12 +70,8 @@ rm.get("/selfupdate") { req ->
     def cmd = [action:"find", collection:"application", matcher:[:], keys:[cliVersion:1]]
     vertx.eventBus.send("mongo-persistor", cmd){ msg ->
         def sdkmanCliVersion = msg.body.results.cliVersion.first()
-
-        def binding = [cliVersion: sdkmanCliVersion]
-        def template = selfupdateTemplate.make(binding)
-
         addPlainTextHeader req
-        req.response.end template.toString()
+        req.response.end selfupdateScriptText.replace("<SDKMAN_CLI_VERSION>", sdkmanCliVersion)
     }
 }
 
