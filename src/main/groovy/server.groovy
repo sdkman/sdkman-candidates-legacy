@@ -83,7 +83,7 @@ rm.get("/res") { req ->
 	log purpose, 'sdkman', SDKMAN_VERSION, req
 
 	def baseUrl = "https://bintray.com/artifact/download"
-	def folders = "sdkman/sdkman-cli/sdkman-cli/sdkman-cli"
+	def folders = "sdkman/generic"
 
 	def cmd = [action:"find", collection:"application", matcher:[:], keys:[cliVersion:1]]
 	vertx.eventBus.send("mongo-persistor", cmd){ msg ->
