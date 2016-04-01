@@ -134,7 +134,7 @@ function __sdkman_echo_debug {
 echo ""
 echo "Updating SDKMAN..."
 
-SDKMAN_VERSION="@SDKMAN_VERSION@"
+SDKMAN_VERSION="${cliVersion}"
 if [ -z "$SDKMAN_DIR" ]; then
 	SDKMAN_DIR="$HOME/.sdkman"
 fi
