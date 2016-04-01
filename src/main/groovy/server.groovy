@@ -47,10 +47,10 @@ def listVersionsTemplate = templateEngine.createTemplate(listVersionsTemplateFil
 def listCandidatesTemplateFile = "${sdkmanBase}/list_candidates.gtpl" as File
 def listCandidatesTemplate = templateEngine.createTemplate(listCandidatesTemplateFile)
 
-def installTemplateFile = "${sdkmanBase}/install.sh"
+def installTemplateFile = "${sdkmanBase}/install.sh" as File
 def installTemplate = templateEngine.createTemplate(installTemplateFile)
 
-def selfupdateTemplateFile = "${sdkmanBase}/selfupdate.sh"
+def selfupdateTemplateFile = "${sdkmanBase}/selfupdate.sh" as File
 def selfupdateTemplate = templateEngine.createTemplate(selfupdateTemplateFile)
 
 //
