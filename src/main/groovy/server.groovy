@@ -47,6 +47,8 @@ def listVersionsTemplate = templateEngine.createTemplate(listVersionsTemplateFil
 def listCandidatesTemplateFile = "${sdkmanBase}/list_candidates.gtpl" as File
 def listCandidatesTemplate = templateEngine.createTemplate(listCandidatesTemplateFile)
 
+def installTemplateFile = "${sdkmanBase}/install.sh"
+def installTemplate = templateEngine.createTemplate(installTemplateFile)
 
 //
 // route matcher implementations
@@ -55,8 +57,16 @@ def listCandidatesTemplate = templateEngine.createTemplate(listCandidatesTemplat
 def rm = new RouteMatcher()
 
 rm.get("/") { req ->
-	addPlainTextHeader req
-	req.response.sendFile("${sdkmanBase}/install.sh")
+    def cmd = [action:"find", collection:"application", matcher:[:], keys:[cliVersion:1]]
+    vertx.eventBus.send("mongo-persistor", cmd){ msg ->
+        def sdkmanCliVersion = msg.body.results.cliVersion.first()
+
+        def binding = [cliVersion: sdkmanCliVersion]
+        def template = installTemplate.make(binding)
+
+        addPlainTextHeader req
+        req.response.end template.toString()
+    }
 }
 
 rm.get("/selfupdate") { req ->
