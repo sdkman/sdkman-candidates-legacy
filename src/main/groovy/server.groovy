@@ -328,20 +328,20 @@ rm.get("/candidates/:candidate/:version/download", downloadHandler)
 rm.get("/download/:candidate/:version", downloadHandler)
 
 def versionHandler = { req ->
-	addPlainTextHeader req
-	req.response.end SDKMAN_VERSION
+    def cmd = [action:"find", collection:"application", matcher:[:], keys:[cliVersion:1]]
+    vertx.eventBus.send("mongo-persistor", cmd){ msg ->
+        def sdkmanCliVersion = msg.body.results.cliVersion.first()
+        addPlainTextHeader req
+        req.response.end sdkmanCliVersion
+    }
 }
 
 rm.get("/app/version", versionHandler)
-rm.get("/api/version", versionHandler)
+rm.get("/app/cliversion", versionHandler)
 
-rm.get("/app/cliversion") { req ->
-	def cmd = [action:"find", collection:"application", matcher:[:], keys:[cliVersion:1]]
-	vertx.eventBus.send("mongo-persistor", cmd){ msg ->
-		def sdkmanCliVersion = msg.body.results.cliVersion.first()
-		addPlainTextHeader req
-		req.response.end sdkmanCliVersion
-	}
+rm.get("/api/version") { req ->
+    addPlainTextHeader req
+    req.response.end SDKMAN_VERSION
 }
 
 //
