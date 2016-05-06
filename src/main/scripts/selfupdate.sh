@@ -244,11 +244,11 @@ if [[ -z $(cat ${sdkman_config_file} | grep 'sdkman_disable_gvm_alias') ]]; then
 fi
 
 if [[ -z $(cat ${sdkman_config_file} | grep 'sdkman_curl_connect_timeout') ]]; then
-	echo "sdkman_curl_connect_timeout=5" >> "$sdkman_config_file"
+	echo "sdkman_curl_connect_timeout=7" >> "$sdkman_config_file"
 fi
 
 if [[ -z $(cat ${sdkman_config_file} | grep 'sdkman_curl_max_time') ]]; then
-	echo "sdkman_curl_max_time=4" >> "$sdkman_config_file"
+	echo "sdkman_curl_max_time=10" >> "$sdkman_config_file"
 fi
 
 
