@@ -91,17 +91,17 @@ rm.get("/alive") { req ->
 
 rm.get("/res") { req ->
 	def purpose = req.params['purpose']
-	log purpose, 'sdkman', SDKMAN_VERSION, req
-
 	def baseUrl = "https://bintray.com/artifact/download"
 	def folders = "sdkman/generic"
 
 	def cmd = [action:"find", collection:"application", matcher:[:], keys:[cliVersion:1]]
 	vertx.eventBus.send("mongo-persistor", cmd){ msg ->
-		def sdkmanCliVersion = msg.body.results.cliVersion.first()
+		def sdkmanCliVersion = msg.body.results.cliVersion.first() as String
 		def artifact = "sdkman-cli-${sdkmanCliVersion}.zip"
 		def zipUrl = "$baseUrl/$folders/$artifact"
-		
+
+		log purpose, 'sdkman', sdkmanCliVersion, req
+
 		req.response.putHeader("Content-Type", "application/zip")
 		req.response.putHeader("Location", zipUrl)
 		req.response.statusCode = 302
