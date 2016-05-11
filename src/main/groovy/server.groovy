@@ -365,7 +365,7 @@ private addPlainTextHeader(req){
 
 private log(command, candidate, version, req){
 	def date = new Date()
-	def host = req.headers['x-forwarded-for']
+	def host = req.headers['X-Real-IP']
 	def agent = req.headers['user-agent']
 	def platform = req.params['platform']
 
