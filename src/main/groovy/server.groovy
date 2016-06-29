@@ -19,6 +19,8 @@ import groovy.json.JsonOutput
 import groovy.text.SimpleTemplateEngine
 import org.vertx.groovy.core.http.RouteMatcher
 
+import static java.net.URLEncoder.encode
+
 final SDKMAN_VERSION = '@SDKMAN_VERSION@'
 final VERTX_VERSION = '@VERTX_VERSION@'
 final COLUMN_LENGTH = 15
@@ -97,7 +99,7 @@ rm.get("/res") { req ->
 	def cmd = [action:"find", collection:"application", matcher:[:], keys:[cliVersion:1]]
 	vertx.eventBus.send("mongo-persistor", cmd){ msg ->
 		def sdkmanCliVersion = msg.body.results.cliVersion.first() as String
-		def artifact = "sdkman-cli-${sdkmanCliVersion}.zip"
+		def artifact = "sdkman-cli-${encode(sdkmanCliVersion, "UTF-8")}.zip"
 		def zipUrl = "$baseUrl/$folders/$artifact"
 
 		log purpose, 'sdkman', sdkmanCliVersion, req
