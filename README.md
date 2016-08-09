@@ -19,7 +19,6 @@ If not using Docker, you can install MongoDB as described [here](http://www.mong
 
 After installing, the database needs to be primed with some data. The following lines may be run with `mongod` running as a separate process.
 
-    $ cd /path/to/sdkman
     $ mongo sdkman
     > db.application.insert({"alive" : "OK", "cliVersion" : "4.0.28" });
     > db.candidates.insert({"candidate" : "groovy", "default" : "2.4.6", "description" : "Groovy is a powerful, optionally typed and dynamic language, with static-typing and static compilation capabilities, for the Java platform aimed at multiplying developers' productivity thanks to a concise, familiar and easy to learn syntax. It integrates smoothly with any Java program, and immediately delivers to your application powerful features, including scripting capabilities, Domain-Specific Language authoring, runtime and compile-time meta-programming and functional programming.", "name" : "Groovy", "websiteUrl" : "http://www.groovy-lang.org/" });
