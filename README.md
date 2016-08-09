@@ -4,7 +4,7 @@ This is the main serverside component of [SDKMAN!](http://sdkman.io), the Softwa
 
 ## Running the Server Locally
 
-It is useful to run the server locally for development purposes. Working installations of MongoDB and vert.x are required to get going. Sdkman can be used to install vert.x, otherwise install it manually as described on the [install page](http://vertx.io/install.html).
+It is useful to run the server locally for development purposes. Working installations of MongoDB and vert.x are required to get going. Sdkman can be used to install vert.x, otherwise install it manually as described on the [download page](http://vertx.io/download/).
 
     $ sdk install vertx
 
