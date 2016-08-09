@@ -12,8 +12,7 @@ It is useful to run the server locally for development purposes. Working install
 
 The easiest way to get Mongo installed is using [Docker](http://docker.io). If you have Docker installed, simply enter the following in a terminal:
 
-    $ docker run --rm -p 27017:27017 mongo:latest
-
+    $ docker run -d -p 27017:27017 mongo:latest
 
 If not using Docker, you can install MongoDB as described [here](http://www.mongodb.org/downloads).
 
