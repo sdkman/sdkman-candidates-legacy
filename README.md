@@ -24,7 +24,7 @@ After installing, the database needs to be primed with some data. The following 
     > db.candidates.insert({candidate:"groovy", default:"2.0.6"})
     > db.versions.insert({"candidate" : "groovy", "version" : "2.0.6", "url" : "https://bintray.com/artifact/download/groovy/maven/groovy-binary-2.0.6.zip" })
     > db.versions.insert({"candidate" : "groovy", "version" : "2.0.7", "url" : "https://bintray.com/artifact/download/groovy/maven/groovy-binary-2.0.7.zip" })
-
+    > exit
 
 This will create:
 
