@@ -8,6 +8,8 @@ It is useful to run the server locally for development purposes. Working install
 
     $ sdk install vertx
 
+Note that SDKMAN! requires vert.x version 3, and that in turn requires Java 8.0.
+
 ## MongoDB
 
 The easiest way to get Mongo installed is using [Docker](http://docker.io). If you have Docker installed, simply enter the following in a terminal:
