@@ -27,11 +27,11 @@ After installing, the database needs to be primed with some data. The following 
     > db.versions.insert({"candidate" : "groovy", "version" : "2.0.7", "url" : "https://bintray.com/artifact/download/groovy/maven/groovy-binary-2.0.7.zip" });
 
 
-This will:
+This will create:
 
-* create a new `sdkman` database
-* the `application` collection for app info and health check. 
-* the Groovy candidate in the `candidates` collection (defaulting to version 2.0.6)
+* a new `sdkman` database,
+* the `application` collection for app info and health check,
+* the Groovy candidate in the `candidates` collection (defaulting to version 2.0.6),
 * new versions 2.0.6 and 2.0.7 in the `versions` collection.
 
 Add any other candidates that you might require.
