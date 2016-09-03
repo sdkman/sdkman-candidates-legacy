@@ -44,7 +44,7 @@ task prepareScripts(type: Copy) {
     filter(ReplaceTokens, tokens:
         [
             SDKMAN_VERSION          : config.sdkmanVersion ?: defaultSdkManVersion,
-            SDKMAN_CURRENT_API      : config.sdkmanService
+            SDKMAN_SERVICE          : config.sdkmanService
         ]
     )
 }

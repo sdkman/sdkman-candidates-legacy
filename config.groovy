@@ -4,6 +4,6 @@ environments {
 		sdkmanService = 'http://localhost:8080'
 	}
 	production {
-		sdkmanService = 'https://api.sdkman.io/2'
+		sdkmanService = 'https://api.sdkman.io/1'
 	}
 }

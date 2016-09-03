@@ -90,7 +90,7 @@ if [[ -n "$GVM_DIR" && -d "$GVM_DIR" ]]; then
         echo '                                                                               '
 
         SDKMAN_DIR=$(echo $GVM_DIR | sed 's/gvm/sdkman/g')
-        SDKMAN_CURRENT_API="$GVM_SERVICE"
+        SDKMAN_SERVICE="$GVM_SERVICE"
 
         mv "$GVM_DIR" "$SDKMAN_DIR"
         ln -s "$SDKMAN_DIR" "$GVM_DIR"
@@ -147,7 +147,7 @@ sdkman_src_folder="${SDKMAN_DIR}/src"
 
 
 # fetch new distribution and check integrity
-download_url="${SDKMAN_CURRENT_API}/res?platform=${sdkman_platform}&purpose=selfupdate"
+download_url="${SDKMAN_SERVICE}/res?platform=${sdkman_platform}&purpose=selfupdate"
 __sdkman_echo_debug "Download new scripts from: ${download_url}"
 __sdkman_echo_debug "Download new scripts to: ${sdkman_tmp_zip}"
 curl --location --progress-bar "$download_url" > "$sdkman_tmp_zip"
@@ -176,7 +176,7 @@ mkdir -p "${SDKMAN_DIR}/var"
 mkdir -p "${SDKMAN_DIR}/tmp"
 
 # prepare candidates
-SDKMAN_CANDIDATES_CSV=$(curl -s "${SDKMAN_CURRENT_API}/candidates")
+SDKMAN_CANDIDATES_CSV=$(curl -s "${SDKMAN_SERVICE}/candidates")
 echo "$SDKMAN_CANDIDATES_CSV" > "${SDKMAN_DIR}/var/candidates"
 
 # remove empty candidate directories
