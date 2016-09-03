@@ -1,4 +1,3 @@
-vertxVersion = '1.3.1.final'
 sdkmanVersion = 'CI_BUILD_NUMBER'
 environments {
 	local {

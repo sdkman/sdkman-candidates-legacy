@@ -59,7 +59,7 @@ task prepareServer(type: Copy){
 	from 'src/main/groovy'
 	into 'build/server'
 	include 'server.groovy'
-	filter(ReplaceTokens, tokens: [SDKMAN_VERSION:config.sdkmanVersion ?: defaultSdkManVersion, VERTX_VERSION:config.vertxVersion])
+	filter(ReplaceTokens, tokens: [SDKMAN_VERSION:config.sdkmanVersion ?: defaultSdkManVersion])
 }
 
 assemble.dependsOn prepareTemplates, prepareScripts, prepareServer

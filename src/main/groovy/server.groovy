@@ -22,7 +22,6 @@ import org.vertx.groovy.core.http.RouteMatcher
 import static java.net.URLEncoder.encode
 
 final SDKMAN_VERSION = '@SDKMAN_VERSION@'
-final VERTX_VERSION = '@VERTX_VERSION@'
 final COLUMN_LENGTH = 15
 
 //
