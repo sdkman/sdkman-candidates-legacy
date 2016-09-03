@@ -16,8 +16,7 @@
 #
 
 # Global variables
-SDKMAN_SERVICE="@SDKMAN_SERVICE@"
-SDKMAN_BROKER_SERVICE="@SDKMAN_BROKER_SERVICE@"
+SDKMAN_CURRENT_API="@SDKMAN_CURRENT_API@"
 SDKMAN_VERSION="<SDKMAN_CLI_VERSION>"
 
 if [ -z "$SDKMAN_DIR" ]; then
@@ -200,7 +199,7 @@ mkdir -p "$sdkman_var_folder"
 mkdir -p "$sdkman_candidates_folder"
 
 echo "Getting available candidates..."
-SDKMAN_CANDIDATES_CSV=$(curl -s "${SDKMAN_SERVICE}/candidates")
+SDKMAN_CANDIDATES_CSV=$(curl -s "${SDKMAN_CURRENT_API}/candidates")
 echo "$SDKMAN_CANDIDATES_CSV" > "${SDKMAN_DIR}/var/candidates"
 
 echo "Prime the config file..."
@@ -213,7 +212,7 @@ echo "sdkman_curl_connect_timeout=7" >> "$sdkman_config_file"
 echo "sdkman_curl_max_time=10" >> "$sdkman_config_file"
 
 echo "Download script archive..."
-curl -L "${SDKMAN_SERVICE}/res?platform=${sdkman_platform}&purpose=install" > "$sdkman_zip_file"
+curl -L "${SDKMAN_CURRENT_API}/res?platform=${sdkman_platform}&purpose=install" > "$sdkman_zip_file"
 
 echo "Extract script archive..."
 if [[ "$cygwin" == 'true' ]]; then

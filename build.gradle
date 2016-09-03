@@ -31,7 +31,7 @@ def loadConfiguration() {
     def environment = hasProperty('env') ? env : 'local'
     ext.environment = environment
     println "Environment is set to: $environment"
-    
+
     def configFile = file('config.groovy')
     def config = new ConfigSlurper(environment).parse(configFile.toURL())
     ext.config = config
@@ -44,9 +44,7 @@ task prepareScripts(type: Copy) {
     filter(ReplaceTokens, tokens:
         [
             SDKMAN_VERSION          : config.sdkmanVersion ?: defaultSdkManVersion,
-            SDKMAN_SERVICE          : config.sdkmanService,
-            SDKMAN_BROKER_SERVICE   : config.sdkmanBrokerService,
-            SDKMAN_BROADCAST_SERVICE: config.sdkmanBroadcastService
+            SDKMAN_CURRENT_API      : config.sdkmanService
         ]
     )
 }
