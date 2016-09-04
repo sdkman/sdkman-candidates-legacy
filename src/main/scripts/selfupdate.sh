@@ -145,6 +145,7 @@ sdkman_tmp_zip="${SDKMAN_DIR}/tmp/res-${SDKMAN_VERSION}.zip"
 sdkman_stage_folder="${SDKMAN_DIR}/tmp/stage"
 sdkman_src_folder="${SDKMAN_DIR}/src"
 
+SDKMAN_SERVICE="@SDKMAN_SERVICE@"
 
 # fetch new distribution and check integrity
 download_url="${SDKMAN_SERVICE}/res?platform=${sdkman_platform}&purpose=selfupdate"
