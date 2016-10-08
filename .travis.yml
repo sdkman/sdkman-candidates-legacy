@@ -5,11 +5,11 @@ language: java
 install:
   - docker login -e="$DOCKER_EMAIL" -u="$DOCKER_USERNAME" -p="$DOCKER_PASSWORD"
 script:
-  - sed -i "s/CI_BUILD_NUMBER/${TRAVIS_BUILD_NUMBER}/g" config.groovy
+  - sed -i "s/CI_BUILD_NUMBER/1.${TRAVIS_BUILD_NUMBER}/g" config.groovy
   - ./gradlew -Penv=production clean assemble
 after_success:
   - docker build -t sdkman/sdkman-candidates-legacy:"1.$TRAVIS_BUILD_NUMBER" .
-  - docker push sdkman/sdkman-candidates:"1.$TRAVIS_BUILD_NUMBER"
+  - docker push sdkman/sdkman-candidates-legacy:"1.$TRAVIS_BUILD_NUMBER"
 before_cache:
   - rm -f $HOME/.gradle/caches/modules-2/modules-2.lock
 cache:
