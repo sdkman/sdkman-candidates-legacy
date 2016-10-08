@@ -12,7 +12,7 @@ apply plugin: 'eclipse'
 
 defaultTasks 'clean', 'prepareServer', 'prepareTemplates'
 
-ext.defaultSdkManVersion = '1.0.0-SNAPSHOT'
+ext.defaultSdkManVersion = '1.0-SNAPSHOT'
 
 loadConfiguration()
 
