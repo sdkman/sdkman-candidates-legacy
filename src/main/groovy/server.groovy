@@ -350,8 +350,9 @@ def versionHandler = { String field ->
 	}
 }
 
-rm.get("/app/version", versionHandler('cliVersion'))
+rm.get("/app/stable", versionHandler('cliVersion'))
 rm.get("/app/beta", versionHandler('betaCliVersion'))
+rm.get("/app/version", versionHandler('cliVersion'))
 rm.get("/app/cliversion", versionHandler('cliVersion'))
 
 rm.get("/api/version") { req ->
