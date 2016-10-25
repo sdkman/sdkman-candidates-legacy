@@ -339,17 +339,20 @@ def downloadHandler = { req ->
 rm.get("/candidates/:candidate/:version/download", downloadHandler)
 rm.get("/download/:candidate/:version", downloadHandler)
 
-def versionHandler = { req ->
-    def cmd = [action:"find", collection:"application", matcher:[:], keys:[cliVersion:1]]
-    vertx.eventBus.send("mongo-persistor", cmd){ msg ->
-        def sdkmanCliVersion = msg.body.results.cliVersion.first()
-        addPlainTextHeader req
-        req.response.end sdkmanCliVersion
-    }
+def versionHandler = { String field ->
+	{ req ->
+		def cmd = [action: "find", collection: "application", matcher: [:], keys: [(field): 1]]
+		vertx.eventBus.send("mongo-persistor", cmd) { msg ->
+			String cliVersion = msg.body.results."$field".first()
+			addPlainTextHeader req
+			req.response.end cliVersion
+		}
+	}
 }
 
-rm.get("/app/version", versionHandler)
-rm.get("/app/cliversion", versionHandler)
+rm.get("/app/version", versionHandler('cliVersion'))
+rm.get("/app/cliversion", versionHandler('cliVersion'))
+rm.get("/app/betaversion", versionHandler('betaCliVersion'))
 
 rm.get("/api/version") { req ->
     addPlainTextHeader req
