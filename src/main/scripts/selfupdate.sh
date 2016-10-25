@@ -252,6 +252,10 @@ if [[ -z $(cat ${sdkman_config_file} | grep 'sdkman_curl_max_time') ]]; then
 	echo "sdkman_curl_max_time=10" >> "$sdkman_config_file"
 fi
 
+if [[ -z $(cat ${sdkman_config_file} | grep 'sdkman_beta_channel') ]]; then
+	echo "sdkman_beta_channel=false" >> "$sdkman_config_file"
+fi
+
 
 # drop version token
 echo "$SDKMAN_VERSION" > "${SDKMAN_DIR}/var/version"

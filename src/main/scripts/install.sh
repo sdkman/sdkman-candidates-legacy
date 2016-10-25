@@ -210,6 +210,7 @@ echo "sdkman_insecure_ssl=false" >> "$sdkman_config_file"
 echo "sdkman_disable_gvm_alias=false" >> "$sdkman_config_file"
 echo "sdkman_curl_connect_timeout=7" >> "$sdkman_config_file"
 echo "sdkman_curl_max_time=10" >> "$sdkman_config_file"
+echo "sdkman_beta_channel=false" >> "$sdkman_config_file"
 
 echo "Download script archive..."
 curl -L "${SDKMAN_SERVICE}/res?platform=${sdkman_platform}&purpose=install" > "$sdkman_zip_file"
