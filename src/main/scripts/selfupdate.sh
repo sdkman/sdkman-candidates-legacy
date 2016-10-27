@@ -90,6 +90,7 @@ mkdir -p "${SDKMAN_DIR}/ext"
 mkdir -p "${SDKMAN_DIR}/etc"
 mkdir -p "${SDKMAN_DIR}/src"
 mkdir -p "${SDKMAN_DIR}/var"
+mkdir -p "${SDKMAN_DIR}/archives"
 mkdir -p "${SDKMAN_DIR}/tmp"
 
 # prepare candidates
