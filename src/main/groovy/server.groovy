@@ -306,7 +306,7 @@ private combineVersions(available, installed){
 def validationHandler = { req ->
 	def candidate = req.params['candidate']
 	def version = req.params['version']
-	def cmd = [action:"find", collection:"versions", matcher:[candidate:candidate, version:version]]
+	def cmd = [action:"find", collection:"versions", matcher:[candidate:candidate, version:version, platform: "UNIVERSAL"]]
 	vertx.eventBus.send("mongo-persistor", cmd){ msg ->
 		addPlainTextHeader req
 		if(msg.body.results) {
