@@ -23,6 +23,7 @@ import static java.net.URLEncoder.encode
 
 final SDKMAN_VERSION = '@SDKMAN_VERSION@'
 final COLUMN_LENGTH = 15
+final UNIVERSAL_PLATFORM = "UNIVERSAL"
 
 //
 // datasource configuration
@@ -111,7 +112,7 @@ rm.get("/res") { req ->
 }
 
 rm.get("/candidates") { req ->
-	def cmd = [action:"find", collection:"candidates", matcher:[:], keys:[candidate:1]]
+	def cmd = [action:"find", collection:"candidates", matcher:[distribution: UNIVERSAL_PLATFORM], keys:[candidate:1]]
 	vertx.eventBus.send("mongo-persistor", cmd){ msg ->
 		def candidates = msg.body.results.collect(new TreeSet()) { it.candidate }
 		addPlainTextHeader req
@@ -124,7 +125,7 @@ TreeMap candidates = [:]
 rm.get("/candidates/list") { req ->
     def cmd = [action    : "find",
                collection: "candidates",
-               matcher   : [:],
+               matcher   : [distribution: UNIVERSAL_PLATFORM],
                keys      : [candidate  : 1,
                             default    : 1,
                             description: 1,
@@ -185,7 +186,7 @@ def format(List words) {
 
 rm.get("/candidates/:candidate") { req ->
 	def candidate = req.params['candidate']
-	def cmd = [action:"find", collection:"versions", matcher:[candidate:candidate], keys:["version":1]]
+	def cmd = [action:"find", collection:"versions", matcher:[candidate:candidate, platform: UNIVERSAL_PLATFORM], keys:["version":1]]
 	vertx.eventBus.send("mongo-persistor", cmd){ msg ->
 		def response
 		if(msg.body.results){
@@ -203,7 +204,7 @@ rm.get("/candidates/:candidate") { req ->
 
 rm.get("/candidates/:candidate/default") { req ->
 	def candidate = req.params['candidate']
-	def cmd = [action:"find", collection:"candidates", matcher:[candidate:candidate], keys:["default":1]]
+	def cmd = [action:"find", collection:"candidates", matcher:[candidate:candidate, distribution: UNIVERSAL_PLATFORM], keys:["default":1]]
 	vertx.eventBus.send("mongo-persistor", cmd){ msg ->
 		addPlainTextHeader req
 		def defaultVersion = msg.body.results.default
@@ -216,7 +217,7 @@ rm.get("/candidates/:candidate/details") { req ->
 	def cmd = [
 			action:"find",
 			collection:"candidates",
-			matcher:[candidate:candidate],
+			matcher:[candidate:candidate, distribution: UNIVERSAL_PLATFORM],
 			keys:[
                     "candidate":1,
 					"default":1,
@@ -239,7 +240,7 @@ rm.get("/candidates/:candidate/list") { req ->
 	def currentVersion = req.params['current'] ?: ''
 	def installedVersions = req.params['installed'] ? req.params['installed'].tokenize(',') : []
 
-	def cmd = [action:"find", collection:"versions", matcher:[candidate:candidate], keys:["version":1], sort:["version":-1]]
+	def cmd = [action:"find", collection: "versions", matcher:[candidate:candidate, platform: UNIVERSAL_PLATFORM], keys:["version":1], sort:["version":-1]]
 	vertx.eventBus.send("mongo-persistor", cmd){ msg ->
 		def availableVersions = msg.body.results.collect { it.version }
 
@@ -306,7 +307,7 @@ private combineVersions(available, installed){
 def validationHandler = { req ->
 	def candidate = req.params['candidate']
 	def version = req.params['version']
-	def cmd = [action:"find", collection:"versions", matcher:[candidate:candidate, version:version, platform: "UNIVERSAL"]]
+	def cmd = [action:"find", collection:"versions", matcher:[candidate:candidate, version:version, platform: UNIVERSAL_PLATFORM]]
 	vertx.eventBus.send("mongo-persistor", cmd){ msg ->
 		addPlainTextHeader req
 		if(msg.body.results) {
@@ -328,7 +329,12 @@ def downloadHandler = { req ->
 
 	log 'install', candidate, version, req
 
-	def cmd = [action:"find", collection:"versions", matcher:[candidate:candidate, version:version], keys:["url":1]]
+	def cmd = [action:"find",
+			   collection:"versions",
+			   matcher:[candidate:candidate,
+						version:version,
+						platform: UNIVERSAL_PLATFORM],
+			   keys:["url":1]]
 	vertx.eventBus.send("mongo-persistor", cmd){ msg ->
 		req.response.headers['Location'] = msg.body.results.url.first()
 		req.response.statusCode = 302
