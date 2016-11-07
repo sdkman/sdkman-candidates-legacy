@@ -185,14 +185,18 @@ echo "$SDKMAN_VERSION" > "${SDKMAN_DIR}/var/version"
 # the end
 echo ""
 echo ""
-echo "Successfully upgraded SDKMAN."
+echo "Successfully upgraded SDKMAN!"
 echo ""
 echo "Open a new terminal to start using SDKMAN $SDKMAN_VERSION."
 echo ""
-echo "To join our beta channel, simply follow the instructions on:"
+if [[ "$sdkman_debug_mode" == 'true' ]]; then
+	echo "You are subscribed to the BETA channel."
+	echo "To return to STABLE, simply follow the instructions on:"
+else
+	echo "To join our BETA channel, simply follow the instructions on:"
+fi
 echo ""
 echo "   http://sdkman.io/install.html"
 echo ""
 echo "Enjoy!!!"
-echo ""
 echo ""
