@@ -69,11 +69,13 @@ rm.get("/") { req ->
 }
 
 rm.get("/selfupdate") { req ->
-    def cmd = [action:"find", collection:"application", matcher:[:], keys:[cliVersion:1]]
+    boolean beta = Boolean.valueOf(req.params['beta'] as String) ?: false
+    def cmd = [action:"find", collection:"application", matcher:[:], keys:[cliVersion:1, betaCliVersion:1]]
     vertx.eventBus.send("mongo-persistor", cmd){ msg ->
-        def sdkmanCliVersion = msg.body.results.cliVersion.first()
+        String sdkmanCliVersion = msg.body.results.cliVersion.first()
+        String sdkmanBetaCliVersion = msg.body.results.betaCliVersion.first()
         addPlainTextHeader req
-        req.response.end selfupdateScriptText.replace("<SDKMAN_CLI_VERSION>", sdkmanCliVersion)
+        req.response.end selfupdateScriptText.replace("<SDKMAN_CLI_VERSION>", (beta ? sdkmanBetaCliVersion : sdkmanCliVersion))
     }
 }
 
