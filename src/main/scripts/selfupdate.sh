@@ -64,7 +64,7 @@ sdkman_src_folder="${SDKMAN_DIR}/src"
 SDKMAN_SERVICE="@SDKMAN_SERVICE@"
 
 # fetch new distribution and check integrity
-download_url="${SDKMAN_SERVICE}/res?platform=${sdkman_platform}&purpose=selfupdate"
+download_url="${SDKMAN_SERVICE}/res?platform=${sdkman_platform}&purpose=selfupdate?version=${SDKMAN_VERSION}"
 __sdkman_echo_debug "Download new scripts from: ${download_url}"
 __sdkman_echo_debug "Download new scripts to: ${sdkman_tmp_zip}"
 curl --location --progress-bar "$download_url" > "$sdkman_tmp_zip"
