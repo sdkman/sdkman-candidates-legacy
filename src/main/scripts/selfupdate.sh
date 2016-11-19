@@ -94,7 +94,11 @@ mkdir -p "${SDKMAN_DIR}/archives"
 mkdir -p "${SDKMAN_DIR}/tmp"
 
 # prepare candidates
-SDKMAN_CANDIDATES_CSV=$(curl -s "${SDKMAN_SERVICE}/candidates")
+if [[ "$sdkman_beta_channel" == 'true' ]]; then
+    SDKMAN_CANDIDATES_CSV=$(curl -s "https://api.sdkman.io/2/candidates/all")
+else
+    SDKMAN_CANDIDATES_CSV=$(curl -s "${SDKMAN_SERVICE}/candidates")
+fi
 echo "$SDKMAN_CANDIDATES_CSV" > "${SDKMAN_DIR}/var/candidates"
 
 # remove empty candidate directories
