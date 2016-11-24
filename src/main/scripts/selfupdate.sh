@@ -193,7 +193,7 @@ echo "Successfully upgraded SDKMAN!"
 echo ""
 echo "Open a new terminal to start using SDKMAN $SDKMAN_VERSION."
 echo ""
-if [[ "$sdkman_debug_mode" == 'true' ]]; then
+if [[ "$sdkman_beta_channel" == 'true' ]]; then
 	echo "You are subscribed to the BETA channel."
 	echo "To return to STABLE, simply follow the instructions on:"
 else
