@@ -129,7 +129,6 @@ TreeMap candidates = [:]
 rm.get("/candidates/list") { req ->
     def cmd = [action    : "find",
                collection: "candidates",
-               matcher   : [distribution: UNIVERSAL_PLATFORM],
                keys      : [candidate  : 1,
                             default    : 1,
                             description: 1,
@@ -239,24 +238,56 @@ rm.get("/candidates/:candidate/details") { req ->
 	}
 }
 
-rm.get("/candidates/:candidate/list") { req ->
-	def candidate = req.params['candidate']
-	def currentVersion = req.params['current'] ?: ''
-	def installedVersions = req.params['installed'] ? req.params['installed'].tokenize(',') : []
+rm.get("/candidates/:candidate/list/:platform") { req ->
+    def candidate = req.params['candidate']
+    def uname = req.params['platform']
+    def currentVersion = req.params['current'] ?: ''
+    def installedVersions = req.params['installed'] ? req.params['installed'].tokenize(',') : []
 
-	def cmd = [action:"find", collection: "versions", matcher:[candidate:candidate, platform: UNIVERSAL_PLATFORM], keys:["version":1], sort:["version":-1]]
-	vertx.eventBus.send("mongo-persistor", cmd){ msg ->
-		def availableVersions = msg.body.results.collect { it.version }
+    def candidateCmd = [
+            action    : "find",
+            collection: "candidates",
+            matcher   : [candidate: candidate],
+            keys      : ["distribution": 1]]
 
-        def combinedVersions = combineVersions(availableVersions, installedVersions)
-        def localVersions = determineLocalVersions(availableVersions, installedVersions)
+    vertx.eventBus.send("mongo-persistor", candidateCmd) { candidateMsg ->
+        def distribution = (candidateMsg.body.results.distribution.first() == "PLATFORM_SPECIFIC") ? determinePlatform(uname) : UNIVERSAL_PLATFORM
+        def versionCmd = [
+                action    : "find",
+                collection: "versions",
+                matcher   : [candidate: candidate, platform: distribution],
+                keys      : ["version": 1],
+                sort      : ["version": -1]]
+        vertx.eventBus.send("mongo-persistor", versionCmd) { versionMsg ->
+            def availableVersions = versionMsg.body.results.collect { it.version }
 
-        def content = prepareVersionListView(combinedVersions, currentVersion, installedVersions, localVersions, COLUMN_LENGTH)
-        def binding = [candidate: candidate, content:content]
-        def template = listVersionsTemplate.make(binding)
+            def combinedVersions = combineVersions(availableVersions, installedVersions)
+            def localVersions = determineLocalVersions(availableVersions, installedVersions)
 
-        addPlainTextHeader req
-        req.response.end template.toString()
+            def content = prepareVersionListView(combinedVersions, currentVersion, installedVersions, localVersions, COLUMN_LENGTH)
+            def binding = [candidate: candidate, content: content]
+            def template = listVersionsTemplate.make(binding)
+
+            addPlainTextHeader req
+            req.response.end template.toString()
+        }
+    }
+}
+
+private determinePlatform(uname) {
+	switch (uname) {
+		case "Darwin":
+			return "MAC_OSX"
+		case "Linux":
+			return "LINUX"
+		case "FreeBSD":
+			return "FREE_BSD"
+		case "SunOS":
+			return "SUN_OS"
+		case "MINGW32":
+			return "WINDOWS_32"
+		default:
+			return "WINDOWS_64"
 	}
 }
 
