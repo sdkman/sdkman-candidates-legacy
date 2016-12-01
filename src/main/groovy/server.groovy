@@ -129,6 +129,7 @@ TreeMap candidates = [:]
 rm.get("/candidates/list") { req ->
     def cmd = [action    : "find",
                collection: "candidates",
+               matcher   : [:],
                keys      : [candidate  : 1,
                             default    : 1,
                             description: 1,
