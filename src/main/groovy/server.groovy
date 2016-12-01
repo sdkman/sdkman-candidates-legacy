@@ -238,7 +238,7 @@ rm.get("/candidates/:candidate/details") { req ->
 	}
 }
 
-rm.get("/candidates/:candidate/list/:platform") { req ->
+rm.get("/candidates/:candidate/list") { req ->
     def candidate = req.params['candidate']
     def uname = req.params['platform']
     def currentVersion = req.params['current'] ?: ''
