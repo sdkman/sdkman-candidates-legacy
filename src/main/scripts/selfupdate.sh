@@ -94,7 +94,7 @@ mkdir -p "${SDKMAN_DIR}/archives"
 mkdir -p "${SDKMAN_DIR}/tmp"
 
 # prepare candidates
-SDKMAN_CANDIDATES_CSV=$(curl -s "${SDKMAN_SERVICE}/2/candidates/all")
+SDKMAN_CANDIDATES_CSV=$(curl -s "https://api.sdkman.io/2/candidates/all")
 __sdkman_echo_debug "Fetched candidates: $SDKMAN_CANDIDATES_CSV"
 echo "$SDKMAN_CANDIDATES_CSV" > "${SDKMAN_DIR}/var/candidates"
 __sdkman_echo_debug "Overwritten cache: $(cat "${SDKMAN_DIR}/var/candidates")"
