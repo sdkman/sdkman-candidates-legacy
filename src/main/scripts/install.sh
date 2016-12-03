@@ -213,7 +213,7 @@ mkdir -p "$sdkman_archives_folder"
 mkdir -p "$sdkman_candidates_folder"
 
 echo "Getting available candidates..."
-SDKMAN_CANDIDATES_CSV=$(curl -s "${SDKMAN_SERVICE}/candidates")
+SDKMAN_CANDIDATES_CSV=$(curl -s "https://api.sdkman.io/2/candidates/all")
 echo "$SDKMAN_CANDIDATES_CSV" > "${SDKMAN_DIR}/var/candidates"
 
 echo "Prime the config file..."
