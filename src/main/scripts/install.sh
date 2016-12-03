@@ -140,6 +140,18 @@ if [ -z $(which unzip) ]; then
 	exit 0
 fi
 
+echo "Looking for zip..."
+if [ -z $(which zip) ]; then
+	echo "Not found."
+	echo "======================================================================================================"
+	echo " Please install zip on your system using your favourite package manager."
+	echo ""
+	echo " Restart after installing zip."
+	echo "======================================================================================================"
+	echo ""
+	exit 0
+fi
+
 echo "Looking for curl..."
 if [ -z $(which curl) ]; then
 	echo "Not found."
