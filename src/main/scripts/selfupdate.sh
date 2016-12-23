@@ -179,6 +179,10 @@ if [[ -z $(cat ${sdkman_config_file} | grep 'sdkman_debug_mode') ]]; then
 	echo "sdkman_debug_mode=false" >> "$sdkman_config_file"
 fi
 
+if [[ -z $(cat ${sdkman_config_file} | grep 'sdkman_colour_enable') ]]; then
+	echo "sdkman_colour_enable=true" >> "$sdkman_config_file"
+fi
+
 
 # drop version token
 echo "$SDKMAN_VERSION" > "${SDKMAN_DIR}/var/version"
