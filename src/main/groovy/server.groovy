@@ -280,7 +280,11 @@ private determinePlatform(uname) {
 		case "Darwin":
 			return "MAC_OSX"
 		case "Linux":
-			return "LINUX"
+			return "LINUX_64"
+		case "Linux64":
+			return "LINUX_64"
+		case "Linux32":
+			return "LINUX_32"
 		case "FreeBSD":
 			return "FREE_BSD"
 		case "SunOS":
