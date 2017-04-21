@@ -5,19 +5,19 @@ language: java
 install:
   - docker login -e="$DOCKER_EMAIL" -u="$DOCKER_USERNAME" -p="$DOCKER_PASSWORD"
 script:
-  - sed -i "s/CI_BUILD_NUMBER/${TRAVIS_BUILD_NUMBER}/g" config.groovy
+  - sed -i "s/CI_BUILD_NUMBER/1.${TRAVIS_BUILD_NUMBER}/g" config.groovy
   - ./gradlew -Penv=production clean assemble
 after_success:
-  - docker build -t sdkman/sdkman-candidates:"$TRAVIS_BUILD_NUMBER" .
-  - docker push sdkman/sdkman-candidates:"$TRAVIS_BUILD_NUMBER"
+  - docker build -t sdkman/sdkman-candidates-legacy:"1.$TRAVIS_BUILD_NUMBER" .
+  - docker push sdkman/sdkman-candidates-legacy:"1.$TRAVIS_BUILD_NUMBER"
 before_cache:
   - rm -f $HOME/.gradle/caches/modules-2/modules-2.lock
 cache:
   directories:
   - "$HOME/.gradle/caches/"
   - "$HOME/.gradle/wrapper/"
-env:
-  global:
-  - secure: Eb4UT+RkPQOXFS4kjWFwL1VhOG7ZLvvmRLqmZWUkwzJxVoRetyAUpjvE/yOvgNRqBwyILLzK/Th3VQwbogiYalXBOMjcwYyZDhUTzF5j0VZEWUUHXzTQU9iy9HxJ5xGgGAkcE6zZrKWkt9CB3vhVxC1FH9CAr8OdhuRgbrZ4+92AiFL+uVvLtBqk0oxEHXJbeVbPLb+2e4VoHD95CzX0wHk19R5H+KJ/Lm50f+y/GNKcq5yBENgm1yxz1VP/FQXGbEGpjHAjJtDw2XVBFOyQGNBM3PvrYNyLDEWs1WWEMor7PtrhgfFDhdsp7Gd9oWO+cOoQC+X11bVfdJqMn90WvZz2ddwM35KutKk16RHsvt7ui0RXo75T0OXl236jcjCYFH5G4qnaGho9dCpJPTYJjdqoNlBGdWEaGqjp4tn2QSoK/CwSi7imOObzO6HID7aWFkTb1NOP4HcYridMwx4UsUy5cnS5OPDoPtUwOOUPILkt3rXUfO3oyOGm2y1AgnzqiPULu/YwcAW63fEOF9MVyMKHH3G7Xiu0PYSfsj1fS/brcpOSrkrSi3gjoIwrtl73tkzKRcyhKem/nR9vDoPl4i4GxgusQujX4gqEEmlBo0hC1EwFM49UMIoqJ/4rv5SbhIqAAnDmyxGpGiGHsti19gmZUG7yoIrfBdIr5/AV0iU=
-  - secure: TJySo6dTS+9vtBZTrEbE4k/OlvK7Ix37O9RMWEYyB1EgFAW2CMUdEGHajSEPZt9dioCE5OJ7Nk8ysbwMwOzyQAqMhAhbcW5Z+g4tFtegdi9ArlonvJsfY4GuOfTWlX8E6QWuW8ra9Hb4dMf91SL7FNk5dt//JMcTJZtiHAxF5XNS9uBtpc9u4LPTO3sprLGiyc4mkofF7PuSdhez+FWphkYzDlXS3JXG2YS0DMyVEAI124fJNL7nFNM63KMz2ntkBEEuZQi622gOokXaL21ONdSDbgiyrYB1Exs+b0vs5CPVR2l6DWLgOckhZmJtvAH3zRp4rfMfMMIIb4UB4ErOyMnwZymAChBPSpFLv03iGk4HRBR2Ic4BZAkihfPsSZ0a4qaIeVEZiKmCv1kMmhvSudyKmrHjBKv+uoN4JL8xlVhycSn+jAyUtflj+VFYxFszRItC0caXCotZX836T2wiJxDq6lq09cL7veEULSfp0YlOYmWE+clkN1EbGK4YboQybMip6DzU9rUESsuKRJgF2QlmDK61C8hCvmwKxz0RmLaw/ICwt0HPPR/KV/90Odh1iqt3D+Sd/5FkqsnifHCU66s38OPWvrWPJO8mxaHMIYyb7YoBbBg5KPM/b3fZBA1/chsPB0RNS9pT400PnL0/8blf2Czb1XsQBNFGhayjxs0=
-  - secure: EFpvuA1qS0nd8MfQQwjnTPu2AjEKCiXZI5bI4YvW9t9JdfdQaANlKS5zp2llPRXgDSD4dEZ3RXpRsoAcyj7EG7LmpOvci0hdQh2hYmHXnmVbubM6tOIfQc9GmpWJYD988+e2f878AZJaFLyhuAsVjseaonHF3vUFqHc3XK+qHOLt9kTkokLfCppV4XXpVfISs73L0pwpRcsJuhfjY4JY72dq1Y7Qc6C5UQZEQ24TGjMbLtrVXqYcizFMqMd7pXOr62Wj2sIr0lpe1Bi0+/f4+2Rtgr9A/J86k9d+8yaNgy5o0aQaM+esdsPdvgPIDumNGIoid4t4J6J0L/75CRobmOA2nN+F2wibUpLVRS5W+2tEI1J7CtfdMZcVlFpC3AwEr9MOf1B71M1xxjZRQXfP545TRKe0tTZud+PS4sCiuqGElaz/SFZ88UrpXhx/uQSRiOWKLYsROPJXEECD9siKtr8EXdIecCPNmh4SsFH8q/iC/zbxfOdx3srb05fhnIi9vNLco/GWniKmPWOHBDhjvbAGW9AzMqaHXAwOMQXxlikIuFuuIS1/dDTUNgVPBI7j9tQVQ/G4NbL3GYDsDdROfrQYfRE8xfhU3cjKmX4ICuKSnlIL+ntmchCV18D0V/RW7nHvLalaXaz3Qv/wLSh8xkdG1AmL/GKDmbHlll8Apy0=
+
+# blacklist
+branches:
+  except:
+  - production

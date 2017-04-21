@@ -17,7 +17,6 @@
 
 # Global variables
 SDKMAN_SERVICE="@SDKMAN_SERVICE@"
-SDKMAN_BROKER_SERVICE="@SDKMAN_BROKER_SERVICE@"
 SDKMAN_VERSION="<SDKMAN_CLI_VERSION>"
 
 if [ -z "$SDKMAN_DIR" ]; then
@@ -33,6 +32,7 @@ sdkman_zip_file="${sdkman_tmp_folder}/res-${SDKMAN_VERSION}.zip"
 sdkman_ext_folder="${SDKMAN_DIR}/ext"
 sdkman_etc_folder="${SDKMAN_DIR}/etc"
 sdkman_var_folder="${SDKMAN_DIR}/var"
+sdkman_archives_folder="${SDKMAN_DIR}/archives"
 sdkman_candidates_folder="${SDKMAN_DIR}/candidates"
 sdkman_config_file="${sdkman_etc_folder}/config"
 sdkman_bash_profile="${HOME}/.bash_profile"
@@ -140,6 +140,18 @@ if [ -z $(which unzip) ]; then
 	exit 0
 fi
 
+echo "Looking for zip..."
+if [ -z $(which zip) ]; then
+	echo "Not found."
+	echo "======================================================================================================"
+	echo " Please install zip on your system using your favourite package manager."
+	echo ""
+	echo " Restart after installing zip."
+	echo "======================================================================================================"
+	echo ""
+	exit 0
+fi
+
 echo "Looking for curl..."
 if [ -z $(which curl) ]; then
 	echo "Not found."
@@ -197,10 +209,11 @@ mkdir -p "$sdkman_stage_folder"
 mkdir -p "$sdkman_ext_folder"
 mkdir -p "$sdkman_etc_folder"
 mkdir -p "$sdkman_var_folder"
+mkdir -p "$sdkman_archives_folder"
 mkdir -p "$sdkman_candidates_folder"
 
 echo "Getting available candidates..."
-SDKMAN_CANDIDATES_CSV=$(curl -s "${SDKMAN_SERVICE}/candidates")
+SDKMAN_CANDIDATES_CSV=$(curl -s "https://api.sdkman.io/2/candidates/all")
 echo "$SDKMAN_CANDIDATES_CSV" > "${SDKMAN_DIR}/var/candidates"
 
 echo "Prime the config file..."
@@ -209,8 +222,11 @@ echo "sdkman_auto_answer=false" >> "$sdkman_config_file"
 echo "sdkman_auto_selfupdate=false" >> "$sdkman_config_file"
 echo "sdkman_insecure_ssl=false" >> "$sdkman_config_file"
 echo "sdkman_disable_gvm_alias=false" >> "$sdkman_config_file"
-echo "sdkman_curl_connect_timeout=5" >> "$sdkman_config_file"
-echo "sdkman_curl_max_time=4" >> "$sdkman_config_file"
+echo "sdkman_curl_connect_timeout=7" >> "$sdkman_config_file"
+echo "sdkman_curl_max_time=10" >> "$sdkman_config_file"
+echo "sdkman_beta_channel=false" >> "$sdkman_config_file"
+echo "sdkman_debug_mode=false" >> "$sdkman_config_file"
+echo "sdkman_colour_enable=true" >> "$sdkman_config_file"
 
 echo "Download script archive..."
 curl -L "${SDKMAN_SERVICE}/res?platform=${sdkman_platform}&purpose=install" > "$sdkman_zip_file"

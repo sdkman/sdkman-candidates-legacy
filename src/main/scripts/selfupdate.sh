@@ -38,93 +38,9 @@ case "$(uname)" in
         linux=true
 esac
 
-# upgrade from GVM
-
-if [[ -n "$GVM_DIR" && -d "$GVM_DIR" ]]; then
-    echo ""
-    echo "GVM has been detected on your system..."
-    echo ""
-    echo "This update will upgrade GVM to SDKMAN!"
-    echo ""
-    echo -n "Do you want to continue with the upgrade? (Y/n)"
-
-    read continue < /dev/tty
-
-    if [[ -z "$continue" || "$continue" == "y" || "$continue" == "Y" ]]; then
-        echo ''
-        echo '                                                               		         '
-        echo 'Thanks for upgrading to...                                       		         '
-        echo '                                                               		         '
-        echo '                                                               		         '
-        echo '     SSSSSSSSSSSSSSS DDDDDDDDDDDDD       KKKKKKKKK    KKKKKKK                  '
-        echo '   SS:::::::::::::::SD::::::::::::DDD    K:::::::K    K:::::K                  '
-        echo '  S:::::SSSSSS::::::SD:::::::::::::::DD  K:::::::K    K:::::K                  '
-        echo '  S:::::S     SSSSSSSDDD:::::DDDDD:::::D K:::::::K   K::::::K                  '
-        echo '  S:::::S              D:::::D    D:::::DKK::::::K  K:::::KKK                  '
-        echo '  S:::::S              D:::::D     D:::::D K:::::K K:::::K                     '
-        echo '   S::::SSSS           D:::::D     D:::::D K::::::K:::::K                      '
-        echo '    SS::::::SSSSS      D:::::D     D:::::D K:::::::::::K                       '
-        echo '      SSS::::::::SS    D:::::D     D:::::D K:::::::::::K                       '
-        echo '         SSSSSS::::S   D:::::D     D:::::D K::::::K:::::K                      '
-        echo '              S:::::S  D:::::D     D:::::D K:::::K K:::::K                     '
-        echo '              S:::::S  D:::::D    D:::::DKK::::::K  K:::::KKK                  '
-        echo '  SSSSSSS     S:::::SDDD:::::DDDDD:::::D K:::::::K   K::::::K                  '
-        echo '  S::::::SSSSSS:::::SD:::::::::::::::DD  K:::::::K    K:::::K                  '
-        echo '  S:::::::::::::::SS D::::::::::::DDD    K:::::::K    K:::::K                  '
-        echo '   SSSSSSSSSSSSSSS   DDDDDDDDDDDDD       KKKKKKKKK    KKKKKKK                  '
-        echo '                                                                               '
-        echo '                                                                               '
-        echo '                      mmmmmmm    mmmmmmm     aaaaaaaaaaaaa  nnnn  nnnnnnnn     '
-        echo '                    mm:::::::m  m:::::::mm   a::::::::::::a n:::nn::::::::nn   '
-        echo '                   m::::::::::mm::::::::::m  aaaaaaaaa:::::an::::::::::::::nn  '
-        echo '                   m::::::::::::::::::::::m           a::::ann:::::::::::::::n '
-        echo '                   m:::::mmm::::::mmm:::::m    aaaaaaa:::::a  n:::::nnnn:::::n '
-        echo '                   m::::m   m::::m   m::::m  aa::::::::::::a  n::::n    n::::n '
-        echo '                   m::::m   m::::m   m::::m a::::aaaa::::::a  n::::n    n::::n '
-        echo '                   m::::m   m::::m   m::::ma::::a    a:::::a  n::::n    n::::n '
-        echo '                   m::::m   m::::m   m::::ma::::a    a:::::a  n::::n    n::::n '
-        echo '                   m::::m   m::::m   m::::ma:::::aaaa::::::a  n::::n    n::::n '
-        echo '                   m::::m   m::::m   m::::m a::::::::::aa:::a n::::n    n::::n '
-        echo '                   mmmmmm   mmmmmm   mmmmmm  aaaaaaaaaa  aaaa nnnnnn    nnnnnn '
-        echo '            								                                     '
-        echo '                                                                               '
-
-        SDKMAN_DIR=$(echo $GVM_DIR | sed 's/gvm/sdkman/g')
-        SDKMAN_SERVICE="$GVM_SERVICE"
-
-        mv "$GVM_DIR" "$SDKMAN_DIR"
-        ln -s "$SDKMAN_DIR" "$GVM_DIR"
-
-        if [[ "$darwin" == "true" ]]; then
-            [[ -s "$HOME/.bashrc" ]] && sed -i '' 's/gvm/sdkman/g' "$HOME/.bashrc" && sed -i '' 's/GVM/SDKMAN/g' "$HOME/.bashrc"
-            [[ -s "$HOME/.profile" ]] && sed -i '' 's/gvm/sdkman/g' "$HOME/.profile" && sed -i '' 's/GVM/SDKMAN/g' "$HOME/.profile"
-            [[ -s "$HOME/.bash_profile" ]] && sed -i '' 's/gvm/sdkman/g' "$HOME/.bash_profile" && sed -i '' 's/GVM/SDKMAN/g' "$HOME/.bash_profile"
-            [[ -s "$HOME/.zshrc" ]] && sed -i '' 's/gvm/sdkman/g' "$HOME/.zshrc" && sed -i '' 's/GVM/SDKMAN/g' "$HOME/.zshrc"
-            [[ -s "$SDKMAN/etc/config" ]] && sed -i '' 's/gvm/sdkman/g' "$SDKMAN/etc/config"
-        elif [[ "$solaris" == true ]]; then
-            [[ -s "$HOME/.bashrc" ]] && gsed -i 's/gvm/sdkman/g' "$HOME/.bashrc" && gsed -i 's/GVM/SDKMAN/g' "$HOME/.bashrc"
-            [[ -s "$HOME/.profile" ]] && gsed -i 's/gvm/sdkman/g' "$HOME/.profile" && gsed -i 's/GVM/SDKMAN/g' "$HOME/.profile"
-            [[ -s "$HOME/.bash_profile" ]] && gsed -i 's/gvm/sdkman/g' "$HOME/.bash_profile" && gsed -i 's/GVM/SDKMAN/g' "$HOME/.bash_profile"
-            [[ -s "$HOME/.zshrc" ]] && gsed -i 's/gvm/sdkman/g' "$HOME/.zshrc" && gsed -i 's/GVM/SDKMAN/g' "$HOME/.zshrc"
-            [[ -s "$SDKMAN/etc/config" ]] && gsed -i 's/gvm/sdkman/g' "$SDKMAN/etc/config"
-        else
-            [[ -s "$HOME/.bashrc" ]] && sed -i 's/gvm/sdkman/g' "$HOME/.bashrc" && sed -i 's/GVM/SDKMAN/g' "$HOME/.bashrc"
-            [[ -s "$HOME/.profile" ]] && sed -i 's/gvm/sdkman/g' "$HOME/.profile" && sed -i 's/GVM/SDKMAN/g' "$HOME/.profile"
-            [[ -s "$HOME/.bash_profile" ]] && sed -i 's/gvm/sdkman/g' "$HOME/.bash_profile" && sed -i 's/GVM/SDKMAN/g' "$HOME/.bash_profile"
-            [[ -s "$HOME/.zshrc" ]] && sed -i 's/gvm/sdkman/g' "$HOME/.zshrc" && sed -i 's/GVM/SDKMAN/g' "$HOME/.zshrc"
-            [[ -s "$SDKMAN/etc/config" ]] && sed -i 's/gvm/sdkman/g' "$SDKMAN/etc/config"
-        fi
-
-    else
-        echo ""
-        echo "Not upgrading today..."
-        touch "${GVM_DIR}/var/delay_upgrade"
-        exit
-    fi
-fi
 
 function __sdkman_echo_debug {
-    if [[ "$SDKMAN_DEBUG_MODE" == 'true' ]]; then
+    if [[ "$sdkman_debug_mode" == 'true' ]]; then
         echo "$1"
     fi
 }
@@ -145,12 +61,13 @@ sdkman_tmp_zip="${SDKMAN_DIR}/tmp/res-${SDKMAN_VERSION}.zip"
 sdkman_stage_folder="${SDKMAN_DIR}/tmp/stage"
 sdkman_src_folder="${SDKMAN_DIR}/src"
 
+SDKMAN_SERVICE="@SDKMAN_SERVICE@"
 
 # fetch new distribution and check integrity
-download_url="${SDKMAN_SERVICE}/res?platform=${sdkman_platform}&purpose=selfupdate"
+download_url="${SDKMAN_SERVICE}/res?platform=${sdkman_platform}&purpose=selfupdate&version=${SDKMAN_VERSION}"
 __sdkman_echo_debug "Download new scripts from: ${download_url}"
 __sdkman_echo_debug "Download new scripts to: ${sdkman_tmp_zip}"
-curl -L "$download_url" > "$sdkman_tmp_zip"
+curl --location --progress-bar "$download_url" > "$sdkman_tmp_zip"
 
 ARCHIVE_OK=$(unzip -qt "$sdkman_tmp_zip" | grep 'No errors detected in compressed data')
 if [[ -z "$ARCHIVE_OK" ]]; then
@@ -173,11 +90,14 @@ mkdir -p "${SDKMAN_DIR}/ext"
 mkdir -p "${SDKMAN_DIR}/etc"
 mkdir -p "${SDKMAN_DIR}/src"
 mkdir -p "${SDKMAN_DIR}/var"
+mkdir -p "${SDKMAN_DIR}/archives"
 mkdir -p "${SDKMAN_DIR}/tmp"
 
 # prepare candidates
-SDKMAN_CANDIDATES_CSV=$(curl -s "${SDKMAN_SERVICE}/candidates")
+SDKMAN_CANDIDATES_CSV=$(curl -s "https://api.sdkman.io/2/candidates/all")
+__sdkman_echo_debug "Fetched candidates: $SDKMAN_CANDIDATES_CSV"
 echo "$SDKMAN_CANDIDATES_CSV" > "${SDKMAN_DIR}/var/candidates"
+__sdkman_echo_debug "Overwritten cache: $(cat "${SDKMAN_DIR}/var/candidates")"
 
 # remove empty candidate directories
 # convert csv to array
@@ -244,11 +164,23 @@ if [[ -z $(cat ${sdkman_config_file} | grep 'sdkman_disable_gvm_alias') ]]; then
 fi
 
 if [[ -z $(cat ${sdkman_config_file} | grep 'sdkman_curl_connect_timeout') ]]; then
-	echo "sdkman_curl_connect_timeout=5" >> "$sdkman_config_file"
+	echo "sdkman_curl_connect_timeout=7" >> "$sdkman_config_file"
 fi
 
 if [[ -z $(cat ${sdkman_config_file} | grep 'sdkman_curl_max_time') ]]; then
-	echo "sdkman_curl_max_time=4" >> "$sdkman_config_file"
+	echo "sdkman_curl_max_time=10" >> "$sdkman_config_file"
+fi
+
+if [[ -z $(cat ${sdkman_config_file} | grep 'sdkman_beta_channel') ]]; then
+	echo "sdkman_beta_channel=false" >> "$sdkman_config_file"
+fi
+
+if [[ -z $(cat ${sdkman_config_file} | grep 'sdkman_debug_mode') ]]; then
+	echo "sdkman_debug_mode=false" >> "$sdkman_config_file"
+fi
+
+if [[ -z $(cat ${sdkman_config_file} | grep 'sdkman_colour_enable') ]]; then
+	echo "sdkman_colour_enable=true" >> "$sdkman_config_file"
 fi
 
 
@@ -259,10 +191,18 @@ echo "$SDKMAN_VERSION" > "${SDKMAN_DIR}/var/version"
 # the end
 echo ""
 echo ""
-echo "Successfully upgraded SDKMAN."
+echo "Successfully upgraded SDKMAN!"
 echo ""
-echo "Please open a new terminal, or run the following in the existing one:"
+echo "Open a new terminal to start using SDKMAN $SDKMAN_VERSION."
 echo ""
-echo "    export SDKMAN_DIR=\"${SDKMAN_DIR}\" && source \"${SDKMAN_DIR}/bin/sdkman-init.sh\""
+if [[ "$sdkman_beta_channel" == 'true' ]]; then
+	echo "You are subscribed to the BETA channel."
+	echo "To return to STABLE, simply follow the instructions on:"
+else
+	echo "To join our BETA channel, simply follow the instructions on:"
+fi
 echo ""
+echo "   http://sdkman.io/install.html"
+echo ""
+echo "Enjoy!!!"
 echo ""

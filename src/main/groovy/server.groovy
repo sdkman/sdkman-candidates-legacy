@@ -19,9 +19,11 @@ import groovy.json.JsonOutput
 import groovy.text.SimpleTemplateEngine
 import org.vertx.groovy.core.http.RouteMatcher
 
+import static java.net.URLEncoder.encode
+
 final SDKMAN_VERSION = '@SDKMAN_VERSION@'
-final VERTX_VERSION = '@VERTX_VERSION@'
 final COLUMN_LENGTH = 15
+final UNIVERSAL_PLATFORM = "UNIVERSAL"
 
 //
 // datasource configuration
@@ -67,11 +69,13 @@ rm.get("/") { req ->
 }
 
 rm.get("/selfupdate") { req ->
-    def cmd = [action:"find", collection:"application", matcher:[:], keys:[cliVersion:1]]
+    boolean beta = Boolean.valueOf(req.params['beta'] as String) ?: false
+    def cmd = [action:"find", collection:"application", matcher:[:], keys:[cliVersion:1, betaCliVersion:1]]
     vertx.eventBus.send("mongo-persistor", cmd){ msg ->
-        def sdkmanCliVersion = msg.body.results.cliVersion.first()
+        String sdkmanCliVersion = msg.body.results.cliVersion.first()
+        String sdkmanBetaCliVersion = msg.body.results.betaCliVersion.first()
         addPlainTextHeader req
-        req.response.end selfupdateScriptText.replace("<SDKMAN_CLI_VERSION>", sdkmanCliVersion)
+        req.response.end selfupdateScriptText.replace("<SDKMAN_CLI_VERSION>", (beta ? sdkmanBetaCliVersion : sdkmanCliVersion))
     }
 }
 
@@ -90,18 +94,20 @@ rm.get("/alive") { req ->
 }
 
 rm.get("/res") { req ->
-	def purpose = req.params['purpose']
-	log purpose, 'sdkman', SDKMAN_VERSION, req
-
+	def version = req.params['version'] as String
+	def purpose = req.params['purpose'] as String
 	def baseUrl = "https://bintray.com/artifact/download"
 	def folders = "sdkman/generic"
 
 	def cmd = [action:"find", collection:"application", matcher:[:], keys:[cliVersion:1]]
 	vertx.eventBus.send("mongo-persistor", cmd){ msg ->
-		def sdkmanCliVersion = msg.body.results.cliVersion.first()
-		def artifact = "sdkman-cli-${sdkmanCliVersion}.zip"
+		def sdkmanCliVersion = version ?: msg.body.results.cliVersion.first() as String
+
+		def artifact = "sdkman-cli-${encode(sdkmanCliVersion, "UTF-8")}.zip"
 		def zipUrl = "$baseUrl/$folders/$artifact"
-		
+
+		log purpose, 'sdkman', sdkmanCliVersion, req
+
 		req.response.putHeader("Content-Type", "application/zip")
 		req.response.putHeader("Location", zipUrl)
 		req.response.statusCode = 302
@@ -110,7 +116,7 @@ rm.get("/res") { req ->
 }
 
 rm.get("/candidates") { req ->
-	def cmd = [action:"find", collection:"candidates", matcher:[:], keys:[candidate:1]]
+	def cmd = [action:"find", collection:"candidates", matcher:[distribution: UNIVERSAL_PLATFORM], keys:[candidate:1]]
 	vertx.eventBus.send("mongo-persistor", cmd){ msg ->
 		def candidates = msg.body.results.collect(new TreeSet()) { it.candidate }
 		addPlainTextHeader req
@@ -184,7 +190,7 @@ def format(List words) {
 
 rm.get("/candidates/:candidate") { req ->
 	def candidate = req.params['candidate']
-	def cmd = [action:"find", collection:"versions", matcher:[candidate:candidate], keys:["version":1]]
+	def cmd = [action:"find", collection:"versions", matcher:[candidate:candidate, platform: UNIVERSAL_PLATFORM], keys:["version":1]]
 	vertx.eventBus.send("mongo-persistor", cmd){ msg ->
 		def response
 		if(msg.body.results){
@@ -202,7 +208,7 @@ rm.get("/candidates/:candidate") { req ->
 
 rm.get("/candidates/:candidate/default") { req ->
 	def candidate = req.params['candidate']
-	def cmd = [action:"find", collection:"candidates", matcher:[candidate:candidate], keys:["default":1]]
+	def cmd = [action:"find", collection:"candidates", matcher:[candidate:candidate, distribution: UNIVERSAL_PLATFORM], keys:["default":1]]
 	vertx.eventBus.send("mongo-persistor", cmd){ msg ->
 		addPlainTextHeader req
 		def defaultVersion = msg.body.results.default
@@ -215,7 +221,7 @@ rm.get("/candidates/:candidate/details") { req ->
 	def cmd = [
 			action:"find",
 			collection:"candidates",
-			matcher:[candidate:candidate],
+			matcher:[candidate:candidate, distribution: UNIVERSAL_PLATFORM],
 			keys:[
                     "candidate":1,
 					"default":1,
@@ -234,23 +240,59 @@ rm.get("/candidates/:candidate/details") { req ->
 }
 
 rm.get("/candidates/:candidate/list") { req ->
-	def candidate = req.params['candidate']
-	def currentVersion = req.params['current'] ?: ''
-	def installedVersions = req.params['installed'] ? req.params['installed'].tokenize(',') : []
+    def candidate = req.params['candidate']
+    def uname = req.params['platform']
+    def currentVersion = req.params['current'] ?: ''
+    def installedVersions = req.params['installed'] ? req.params['installed'].tokenize(',') : []
 
-	def cmd = [action:"find", collection:"versions", matcher:[candidate:candidate], keys:["version":1], sort:["version":-1]]
-	vertx.eventBus.send("mongo-persistor", cmd){ msg ->
-		def availableVersions = msg.body.results.collect { it.version }
+    def candidateCmd = [
+            action    : "find",
+            collection: "candidates",
+            matcher   : [candidate: candidate],
+            keys      : ["distribution": 1]]
 
-        def combinedVersions = combineVersions(availableVersions, installedVersions)
-        def localVersions = determineLocalVersions(availableVersions, installedVersions)
+    vertx.eventBus.send("mongo-persistor", candidateCmd) { candidateMsg ->
+        def distribution = (candidateMsg.body.results.distribution.first() == "PLATFORM_SPECIFIC") ? determinePlatform(uname) : UNIVERSAL_PLATFORM
+        def versionCmd = [
+                action    : "find",
+                collection: "versions",
+                matcher   : [candidate: candidate, platform: distribution],
+                keys      : ["version": 1],
+                sort      : ["version": -1]]
+        vertx.eventBus.send("mongo-persistor", versionCmd) { versionMsg ->
+            def availableVersions = versionMsg.body.results.collect { it.version }
 
-        def content = prepareVersionListView(combinedVersions, currentVersion, installedVersions, localVersions, COLUMN_LENGTH)
-        def binding = [candidate: candidate, content:content]
-        def template = listVersionsTemplate.make(binding)
+            def combinedVersions = combineVersions(availableVersions, installedVersions)
+            def localVersions = determineLocalVersions(availableVersions, installedVersions)
 
-        addPlainTextHeader req
-        req.response.end template.toString()
+            def content = prepareVersionListView(combinedVersions, currentVersion, installedVersions, localVersions, COLUMN_LENGTH)
+            def binding = [candidate: candidate, content: content]
+            def template = listVersionsTemplate.make(binding)
+
+            addPlainTextHeader req
+            req.response.end template.toString()
+        }
+    }
+}
+
+private determinePlatform(uname) {
+	switch (uname) {
+		case "Darwin":
+			return "MAC_OSX"
+		case "Linux":
+			return "LINUX_64"
+		case "Linux64":
+			return "LINUX_64"
+		case "Linux32":
+			return "LINUX_32"
+		case "FreeBSD":
+			return "FREE_BSD"
+		case "SunOS":
+			return "SUN_OS"
+		case "MINGW32":
+			return "WINDOWS_32"
+		default:
+			return "WINDOWS_64"
 	}
 }
 
@@ -305,7 +347,7 @@ private combineVersions(available, installed){
 def validationHandler = { req ->
 	def candidate = req.params['candidate']
 	def version = req.params['version']
-	def cmd = [action:"find", collection:"versions", matcher:[candidate:candidate, version:version]]
+	def cmd = [action:"find", collection:"versions", matcher:[candidate:candidate, version:version, platform: UNIVERSAL_PLATFORM]]
 	vertx.eventBus.send("mongo-persistor", cmd){ msg ->
 		addPlainTextHeader req
 		if(msg.body.results) {
@@ -327,7 +369,12 @@ def downloadHandler = { req ->
 
 	log 'install', candidate, version, req
 
-	def cmd = [action:"find", collection:"versions", matcher:[candidate:candidate, version:version], keys:["url":1]]
+	def cmd = [action:"find",
+			   collection:"versions",
+			   matcher:[candidate:candidate,
+						version:version,
+						platform: UNIVERSAL_PLATFORM],
+			   keys:["url":1]]
 	vertx.eventBus.send("mongo-persistor", cmd){ msg ->
 		req.response.headers['Location'] = msg.body.results.url.first()
 		req.response.statusCode = 302
@@ -338,17 +385,21 @@ def downloadHandler = { req ->
 rm.get("/candidates/:candidate/:version/download", downloadHandler)
 rm.get("/download/:candidate/:version", downloadHandler)
 
-def versionHandler = { req ->
-    def cmd = [action:"find", collection:"application", matcher:[:], keys:[cliVersion:1]]
-    vertx.eventBus.send("mongo-persistor", cmd){ msg ->
-        def sdkmanCliVersion = msg.body.results.cliVersion.first()
-        addPlainTextHeader req
-        req.response.end sdkmanCliVersion
-    }
+def versionHandler = { String field ->
+	{ req ->
+		def cmd = [action: "find", collection: "application", matcher: [:], keys: [(field): 1]]
+		vertx.eventBus.send("mongo-persistor", cmd) { msg ->
+			String cliVersion = msg.body.results."$field".first()
+			addPlainTextHeader req
+			req.response.end cliVersion
+		}
+	}
 }
 
-rm.get("/app/version", versionHandler)
-rm.get("/app/cliversion", versionHandler)
+rm.get("/app/stable", versionHandler('cliVersion'))
+rm.get("/app/beta", versionHandler('betaCliVersion'))
+rm.get("/app/version", versionHandler('cliVersion'))
+rm.get("/app/cliversion", versionHandler('cliVersion'))
 
 rm.get("/api/version") { req ->
     addPlainTextHeader req
@@ -365,7 +416,7 @@ private addPlainTextHeader(req){
 
 private log(command, candidate, version, req){
 	def date = new Date()
-	def host = req.headers['x-forwarded-for']
+	def host = req.headers['X-Real-IP']
 	def agent = req.headers['user-agent']
 	def platform = req.params['platform']
 

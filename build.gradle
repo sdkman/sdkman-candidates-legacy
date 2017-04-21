@@ -12,7 +12,7 @@ apply plugin: 'eclipse'
 
 defaultTasks 'clean', 'prepareServer', 'prepareTemplates'
 
-ext.defaultSdkManVersion = '1.0.0-SNAPSHOT'
+ext.defaultSdkManVersion = '1.0-SNAPSHOT'
 
 loadConfiguration()
 
@@ -31,7 +31,7 @@ def loadConfiguration() {
     def environment = hasProperty('env') ? env : 'local'
     ext.environment = environment
     println "Environment is set to: $environment"
-    
+
     def configFile = file('config.groovy')
     def config = new ConfigSlurper(environment).parse(configFile.toURL())
     ext.config = config
@@ -44,9 +44,7 @@ task prepareScripts(type: Copy) {
     filter(ReplaceTokens, tokens:
         [
             SDKMAN_VERSION          : config.sdkmanVersion ?: defaultSdkManVersion,
-            SDKMAN_SERVICE          : config.sdkmanService,
-            SDKMAN_BROKER_SERVICE   : config.sdkmanBrokerService,
-            SDKMAN_BROADCAST_SERVICE: config.sdkmanBroadcastService
+            SDKMAN_SERVICE          : config.sdkmanService
         ]
     )
 }
@@ -61,7 +59,7 @@ task prepareServer(type: Copy){
 	from 'src/main/groovy'
 	into 'build/server'
 	include 'server.groovy'
-	filter(ReplaceTokens, tokens: [SDKMAN_VERSION:config.sdkmanVersion ?: defaultSdkManVersion, VERTX_VERSION:config.vertxVersion])
+	filter(ReplaceTokens, tokens: [SDKMAN_VERSION:config.sdkmanVersion ?: defaultSdkManVersion])
 }
 
 assemble.dependsOn prepareTemplates, prepareScripts, prepareServer
