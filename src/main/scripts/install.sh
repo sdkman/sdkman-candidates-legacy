@@ -248,34 +248,12 @@ mv "$sdkman_stage_folder"/sdkman-* "$sdkman_src_folder"
 echo "Set version to $SDKMAN_VERSION ..."
 echo "$SDKMAN_VERSION" > "${SDKMAN_DIR}/var/version"
 
-
-echo "Attempt update of bash profiles..."
-if [ ! -f "$sdkman_bash_profile" -a ! -f "$sdkman_profile" ]; then
-	echo "#!/bin/bash" > "$sdkman_bash_profile"
-	echo "$sdkman_init_snippet" >> "$sdkman_bash_profile"
-	echo "Created and initialised ${sdkman_bash_profile}"
-else
-	if [ -f "$sdkman_bash_profile" ]; then
-		if [[ -z `grep 'sdkman-init.sh' "$sdkman_bash_profile"` ]]; then
-			echo -e "\n$sdkman_init_snippet" >> "$sdkman_bash_profile"
-			echo "Updated existing ${sdkman_bash_profile}"
-		fi
-	fi
-
-	if [ -f "$sdkman_profile" ]; then
-		if [[ -z `grep 'sdkman-init.sh' "$sdkman_profile"` ]]; then
-			echo -e "\n$sdkman_init_snippet" >> "$sdkman_profile"
-			echo "Updated existing ${sdkman_profile}"
-		fi
-	fi
-fi
-
 if [ ! -f "$sdkman_bashrc" ]; then
 	echo "#!/bin/bash" > "$sdkman_bashrc"
 	echo "$sdkman_init_snippet" >> "$sdkman_bashrc"
 	echo "Created and initialised ${sdkman_bashrc}"
 else
-	if [[ -z `grep 'sdkman-init.sh' "$sdkman_bashrc"` ]]; then
+	if [[ -z $(grep 'sdkman-init.sh' "$sdkman_bashrc") ]]; then
 		echo -e "\n$sdkman_init_snippet" >> "$sdkman_bashrc"
 		echo "Updated existing ${sdkman_bashrc}"
 	fi
@@ -286,7 +264,7 @@ if [ ! -f "$sdkman_zshrc" ]; then
 	echo "$sdkman_init_snippet" >> "$sdkman_zshrc"
 	echo "Created and initialised ${sdkman_zshrc}"
 else
-	if [[ -z `grep 'sdkman-init.sh' "$sdkman_zshrc"` ]]; then
+	if [[ -z $(grep 'sdkman-init.sh' "$sdkman_zshrc") ]]; then
 		echo -e "\n$sdkman_init_snippet" >> "$sdkman_zshrc"
 		echo "Updated existing ${sdkman_zshrc}"
 	fi
