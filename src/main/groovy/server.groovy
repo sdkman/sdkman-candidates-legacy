@@ -84,6 +84,7 @@ rm.get("/robots.txt") { req ->
     req.response.sendFile("${sdkmanBase}/robots.txt")
 }
 
+//deprecated
 rm.get("/alive") { req ->
     def cmd = [action:"find", collection:"application", matcher:[alive:"OK"]]
     vertx.eventBus.send("mongo-persistor", cmd){ msg ->
@@ -93,6 +94,7 @@ rm.get("/alive") { req ->
     }
 }
 
+//deprecated
 rm.get("/res") { req ->
 	def version = req.params['version'] as String
 	def purpose = req.params['purpose'] as String
@@ -115,6 +117,7 @@ rm.get("/res") { req ->
 	}
 }
 
+//deprecated
 rm.get("/candidates") { req ->
 	def cmd = [action:"find", collection:"candidates", matcher:[distribution: UNIVERSAL_PLATFORM], keys:[candidate:1]]
 	vertx.eventBus.send("mongo-persistor", cmd){ msg ->
@@ -188,6 +191,7 @@ def format(List words) {
     [words.join(" ")]
 }
 
+//deprecated
 rm.get("/candidates/:candidate") { req ->
 	def candidate = req.params['candidate']
 	def cmd = [action:"find", collection:"versions", matcher:[candidate:candidate, platform: UNIVERSAL_PLATFORM], keys:["version":1]]
@@ -206,6 +210,7 @@ rm.get("/candidates/:candidate") { req ->
 	}
 }
 
+//deprecated
 rm.get("/candidates/:candidate/default") { req ->
 	def candidate = req.params['candidate']
 	def cmd = [action:"find", collection:"candidates", matcher:[candidate:candidate, distribution: UNIVERSAL_PLATFORM], keys:["default":1]]
@@ -216,6 +221,7 @@ rm.get("/candidates/:candidate/default") { req ->
 	}
 }
 
+//deprecated
 rm.get("/candidates/:candidate/details") { req ->
 	def candidate = req.params['candidate']
 	def cmd = [
@@ -360,7 +366,10 @@ def validationHandler = { req ->
 	}
 }
 
+//deprecated
 rm.get("/candidates/:candidate/:version/validate", validationHandler)
+
+//deprecated
 rm.get("/candidates/:candidate/:version", validationHandler)
 
 def downloadHandler = { req ->
@@ -382,7 +391,10 @@ def downloadHandler = { req ->
 	}
 }
 
+//deprecated
 rm.get("/candidates/:candidate/:version/download", downloadHandler)
+
+//deprecated
 rm.get("/download/:candidate/:version", downloadHandler)
 
 def versionHandler = { String field ->
@@ -398,7 +410,10 @@ def versionHandler = { String field ->
 
 rm.get("/app/stable", versionHandler('cliVersion'))
 rm.get("/app/beta", versionHandler('betaCliVersion'))
+
+//deprecated
 rm.get("/app/version", versionHandler('cliVersion'))
+//deprecated
 rm.get("/app/cliversion", versionHandler('cliVersion'))
 
 rm.get("/api/version") { req ->
