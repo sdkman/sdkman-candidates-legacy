@@ -59,6 +59,7 @@ def selfupdateScriptText = new File("${sdkmanBase}/selfupdate.sh").text
 
 def rm = new RouteMatcher()
 
+//deprecated
 rm.get("/") { req ->
     def cmd = [action:"find", collection:"application", matcher:[:], keys:[cliVersion:1]]
     vertx.eventBus.send("mongo-persistor", cmd){ msg ->
@@ -68,6 +69,7 @@ rm.get("/") { req ->
     }
 }
 
+//deprecated
 rm.get("/selfupdate") { req ->
     boolean beta = Boolean.valueOf(req.params['beta'] as String) ?: false
     def cmd = [action:"find", collection:"application", matcher:[:], keys:[cliVersion:1, betaCliVersion:1]]
@@ -129,6 +131,8 @@ rm.get("/candidates") { req ->
 
 candidateList = "Candidate List initialising. Please try again..."
 TreeMap candidates = [:]
+
+//deprecated
 rm.get("/candidates/list") { req ->
     def cmd = [action    : "find",
                collection: "candidates",
@@ -408,13 +412,18 @@ def versionHandler = { String field ->
 	}
 }
 
-rm.get("/app/stable", versionHandler('cliVersion'))
+//deprecated
+rm.get("/app/stable", versionHandler('stableCliVersion'))
+
+//deprecated
 rm.get("/app/beta", versionHandler('betaCliVersion'))
 
 //deprecated
-rm.get("/app/version", versionHandler('cliVersion'))
+rm.get("/app/version", versionHandler('stableCliVersion'))
+
 //deprecated
-rm.get("/app/cliversion", versionHandler('cliVersion'))
+rm.get("/app/cliversion", versionHandler('stableCliVersion'))
+
 
 rm.get("/api/version") { req ->
     addPlainTextHeader req
