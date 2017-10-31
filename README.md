@@ -1,4 +1,6 @@
-#SDKMAN! Candidate Service
+# SDKMAN! Candidates Legacy Service
+
+### !!!This is a retired service and is no longer in use!!
 
 This is the main serverside component of [SDKMAN!](http://sdkman.io), the Software Development Kit Manager.
 
