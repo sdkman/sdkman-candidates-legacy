@@ -61,9 +61,9 @@ def rm = new RouteMatcher()
 
 //deprecated
 rm.get("/") { req ->
-    def cmd = [action:"find", collection:"application", matcher:[:], keys:[cliVersion:1]]
+    def cmd = [action:"find", collection:"application", matcher:[:], keys:[stableCliVersion:1]]
     vertx.eventBus.send("mongo-persistor", cmd){ msg ->
-        def sdkmanCliVersion = msg.body.results.cliVersion.first()
+        def sdkmanCliVersion = msg.body.results.stableCliVersion.first()
         addPlainTextHeader req
         req.response.end installScriptText.replace("<SDKMAN_CLI_VERSION>", sdkmanCliVersion)
     }
@@ -72,9 +72,9 @@ rm.get("/") { req ->
 //deprecated
 rm.get("/selfupdate") { req ->
     boolean beta = Boolean.valueOf(req.params['beta'] as String) ?: false
-    def cmd = [action:"find", collection:"application", matcher:[:], keys:[cliVersion:1, betaCliVersion:1]]
+    def cmd = [action:"find", collection:"application", matcher:[:], keys:[stableCliVersion:1, betaCliVersion:1]]
     vertx.eventBus.send("mongo-persistor", cmd){ msg ->
-        String sdkmanCliVersion = msg.body.results.cliVersion.first()
+        String sdkmanCliVersion = msg.body.results.stableCliVersion.first()
         String sdkmanBetaCliVersion = msg.body.results.betaCliVersion.first()
         addPlainTextHeader req
         req.response.end selfupdateScriptText.replace("<SDKMAN_CLI_VERSION>", (beta ? sdkmanBetaCliVersion : sdkmanCliVersion))
@@ -103,9 +103,9 @@ rm.get("/res") { req ->
 	def baseUrl = "https://bintray.com/artifact/download"
 	def folders = "sdkman/generic"
 
-	def cmd = [action:"find", collection:"application", matcher:[:], keys:[cliVersion:1]]
+	def cmd = [action:"find", collection:"application", matcher:[:], keys:[stableCliVersion:1]]
 	vertx.eventBus.send("mongo-persistor", cmd){ msg ->
-		def sdkmanCliVersion = version ?: msg.body.results.cliVersion.first() as String
+		def sdkmanCliVersion = version ?: msg.body.results.stableCliVersion.first() as String
 
 		def artifact = "sdkman-cli-${encode(sdkmanCliVersion, "UTF-8")}.zip"
 		def zipUrl = "$baseUrl/$folders/$artifact"

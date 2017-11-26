@@ -23,7 +23,7 @@ After installing, the database needs to be primed with some data. The following 
 
     $ cd /path/to/sdkman
     $ mongo sdkman
-    > db.application.insert({"alive" : "OK", "cliVersion" : "4.0.28" });
+    > db.application.insert({"alive" : "OK", "stableCliVersion" : "4.0.28", "betaCliVersion" : "" });
     > db.candidates.insert({"candidate" : "groovy", "default" : "2.4.6", "description" : "Groovy is a powerful, optionally typed and dynamic language, with static-typing and static compilation capabilities, for the Java platform aimed at multiplying developers' productivity thanks to a concise, familiar and easy to learn syntax. It integrates smoothly with any Java program, and immediately delivers to your application powerful features, including scripting capabilities, Domain-Specific Language authoring, runtime and compile-time meta-programming and functional programming.", "name" : "Groovy", "websiteUrl" : "http://www.groovy-lang.org/" });
     > db.candidates.insert({candidate:"groovy", default:"2.0.6"})
     > db.versions.insert({"candidate" : "groovy", "version" : "2.0.6", "url" : "https://bintray.com/artifact/download/groovy/maven/groovy-binary-2.0.6.zip" });
