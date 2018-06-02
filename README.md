@@ -2,7 +2,7 @@
 
 ### !!!This is a retired service and is no longer in use!!
 
-This is the main serverside component of [SDKMAN!](http://sdkman.io), the Software Development Kit Manager.
+This is the main serverside component of [SDKMAN!](https://sdkman.io), the Software Development Kit Manager.
 
 ## Running the Server Locally
 
