@@ -3,7 +3,7 @@ services:
   - docker
 language: java
 install:
-  - docker login -e="$DOCKER_EMAIL" -u="$DOCKER_USERNAME" -p="$DOCKER_PASSWORD"
+  - docker login -u="$DOCKER_USERNAME" -p="$DOCKER_PASSWORD"
 script:
   - sed -i "s/CI_BUILD_NUMBER/1.${TRAVIS_BUILD_NUMBER}/g" config.groovy
   - ./gradlew -Penv=production clean assemble
